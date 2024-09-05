@@ -1,0 +1,29 @@
+Without docker...
+
+# Set environment variables using conda
+conda env config vars set MUJOCO_GL=egl
+conda env config vars set LD_LIBRARY_PATH=~/.mujoco/mujoco210/bin:${LD_LIBRARY_PATH}
+
+# Remove existing files and directories
+rm -rf ~/.mujoco
+
+# Create the directory and download files
+mkdir -p ~/.mujoco && \
+wget https://www.tdmpc2.com/files/mjkey.txt && \
+wget https://github.com/deepmind/mujoco/releases/download/2.1.0/mujoco210-linux-x86_64.tar.gz && \
+tar -xzf mujoco210-linux-x86_64.tar.gz && \
+rm mujoco210-linux-x86_64.tar.gz && \
+mv mujoco210 ~/.mujoco/mujoco210 && \
+mv mjkey.txt ~/.mujoco/mjkey.txt && \
+find ~/.mujoco -uid 421709 -exec chown $(whoami):$(whoami) {} \; && \
+python -c "import mujoco_py"
+
+
+# metaworld
+pip install git+https://github.com/Farama-Foundation/Metaworld.git@04be337a12305e393c0caf0cbf5ec7755c7c8feb
+
+# maniskill2
+conda env config vars set MS2_ASSET_DIR=~/tdmpc2/data # Presuming this is where you want your data!
+pip install mani-skill2==0.4.1
+cd ~
+python -m mani_skill2.utils.download_asset all -y
